@@ -75,7 +75,7 @@ def main():
     # Tippa.set_odds(1, 77)
     # Tippa.sort_rows()
     # print("Changed")
-    Tippa.print_rows()
+    # Tippa.print_rows()
     # Tippa.create_numpy_array()
     
 
