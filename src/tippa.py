@@ -21,21 +21,22 @@ class TippaRows:
         #     print()
         #     self._rows.append(row)
 
-        for p1 in range(3):
-            for p2 in range(3):
-                for p3 in range(3):
-                    for p4 in range(3):
-                        for p5 in range(3):
-                            for p6 in range(3):
-                                for p7 in range(3):
-                                    for p8 in range(3):
-                                        for p9 in range(3):
-                                            for p10 in range(3):
-                                                for p11 in range(3):
-                                                    for p12 in range(3):
-                                                        for p13 in range(3):
+        signs = '1X2'
+        for p1 in signs:
+            for p2 in signs:
+                for p3 in signs:
+                    for p4 in signs:
+                        for p5 in signs:
+                            for p6 in signs:
+                                for p7 in signs:
+                                    for p8 in signs:
+                                        for p9 in signs:
+                                            for p10 in signs:
+                                                for p11 in signs:
+                                                    for p12 in signs:
+                                                        for p13 in signs:
                                                             row = [p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13]
-                                                            self._rows.append(row)
+                                                            self._rows.append(str(row))
                     
 
     
@@ -76,7 +77,7 @@ def main():
     # Tippa.sort_rows()
     # print("Changed")
     # Tippa.print_rows()
-    # Tippa.create_numpy_array()
+    Tippa.create_numpy_array()
     
 
 if __name__ == "__main__":
