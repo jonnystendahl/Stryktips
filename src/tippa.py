@@ -89,6 +89,18 @@ class TippaRows:
         df_sum = pd.read_excel(file_name_sum)
         df_det = pd.read_excel(file_name_det)
 
+        # df_join = pd.merge(df_sum, df_det, on='omg', how='inner')
+        df_join = df_sum.join(df_det.set_index('omg'), on = 'omg',  lsuffix = '_sum', rsuffix = '_det')
+
+        print(df_sum)
+        print(df_det)
+        print(df_join)
+
+        for row_label, row in df_join.iterrows():
+            print(row_label, row.omg, row.matchnummer, row.correct_row, row.utd13, row.utd12, row.oddset1, row.oddsetX, row.oddset2)
+        
+        print('END')
+
 def main():
     
     Tippa = TippaRows()
