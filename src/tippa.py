@@ -56,29 +56,13 @@ class TippaRows:
         signs = '1X2'
         row_num = 0
         
-        # for p1 in signs:
-        #     for p2 in signs:
-        #         for p3 in signs:
-        #             for p4 in signs:
-        #                 for p5 in signs:
-        #                     for p6 in signs:
-        #                         for p7 in signs:
-        #                             for p8 in signs:
-        #                                 for p9 in signs:
-        #                                     for p10 in signs:
-        #                                         for p11 in signs:
-        #                                             for p12 in signs:
-        #                                                 for p13 in signs:
-        #                                                     self.np_rows[row_num] = ''.join([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13])
-        #                                                     self.calculate_odds(row_num)
-        #                                                     row_num += 1
-        
-        for row_str in it.product(signs, repeat = 1594323):
+        # Generate all possible 1 594 323 row combinations
+        # Also create an array with the total odds for each row
+        for row_str in it.product(signs, repeat = 13):
             self.np_rows[row_num] = ''.join(list(row_str))
             self.calculate_odds(row_num)
             row_num += 1
 
-        # self.np_rows = np.array(rows)
         self.np_sorted = np.argsort(self.np_odds)
                     
     def print_rows(self):
