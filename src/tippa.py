@@ -1,5 +1,7 @@
+import os
 import numpy as np
 import itertools as it
+import pandas as pd
 
 class TippaRows:
 
@@ -80,11 +82,17 @@ class TippaRows:
                 self.np_odds[index] *= self.np_odds_2[row]
             row += 1
 
+    def read_stats(self, file_name_sum, file_name_det):
+            
+        os.chdir('src')
+        
+        df_sum = pd.read_excel(file_name_sum)
+        df_det = pd.read_excel(file_name_det)
+
 def main():
-    import time
     
     Tippa = TippaRows()
-
+    Tippa.read_stats('Stryktips_Statistik_Summering.xlsx', 'Stryktips_Statistik_Detaljer.xlsx')
     Tippa.create_all_rows()
     Tippa.print_rows()
 
