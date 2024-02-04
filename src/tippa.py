@@ -62,7 +62,6 @@ class TippaRows:
         # Also create an array with the total odds for each row
         for row_str in it.product(signs, repeat = 13):
             self.np_rows[row_num] = ''.join(list(row_str))
-            self.calculate_odds(row_num)
             row_num += 1
 
         self.np_sorted = np.argsort(self.np_odds)
@@ -92,12 +91,12 @@ class TippaRows:
         # df_join = pd.merge(df_sum, df_det, on='omg', how='inner')
         df_join = df_sum.join(df_det.set_index('omg'), on = 'omg',  lsuffix = '_sum', rsuffix = '_det')
 
-        print(df_sum)
-        print(df_det)
-        print(df_join)
+        # print(df_sum)
+        # print(df_det)
+        # print(df_join)
 
-        for row_label, row in df_join.iterrows():
-            print(row_label, row.omg, row.matchnummer, row.correct_row, row.utd13, row.utd12, row.oddset1, row.oddsetX, row.oddset2)
+        # for row_label, row in df_join.iterrows():
+        #     print(row_label, row.omg, row.matchnummer, row.correct_row, row.utd13, row.utd12, row.oddset1, row.oddsetX, row.oddset2)
         
         print('END')
 
