@@ -11,6 +11,8 @@ class TippaRows:
     np_odds_1 = np.ones(13, dtype = float)
     np_odds_x = np.ones(13, dtype = float)
     np_odds_2 = np.ones(13, dtype = float)
+
+    df = pd.DataFrame
     
     def __init__(self):
         self.np_odds_1[0] = 1.0
@@ -85,17 +87,18 @@ class TippaRows:
             
         os.chdir('src')
         
-        df_sum = pd.read_excel(file_name_sum)
-        df_det = pd.read_excel(file_name_det)
+        df_sum = pd.read_csv(file_name_sum)
+        df_det = pd.read_csv(file_name_det)
+        
+        self.df = df_sum.join(df_det.set_index('omg'), on = 'omg',  lsuffix = '_sum', rsuffix = '_det')
 
-        # df_join = pd.merge(df_sum, df_det, on='omg', how='inner')
-        df_join = df_sum.join(df_det.set_index('omg'), on = 'omg',  lsuffix = '_sum', rsuffix = '_det')
+        print(df_sum)
+        print(df_det)
+        print(self.df)
 
-        # print(df_sum)
-        # print(df_det)
-        # print(df_join)
+        self.df.info()
 
-        # for row_label, row in df_join.iterrows():
+        # for row_label, row in self.df.iterrows():
         #     print(row_label, row.omg, row.matchnummer, row.correct_row, row.utd13, row.utd12, row.oddset1, row.oddsetX, row.oddset2)
         
         print('END')
@@ -103,7 +106,7 @@ class TippaRows:
 def main():
     
     Tippa = TippaRows()
-    Tippa.read_stats('Stryktips_Statistik_Summering.xlsx', 'Stryktips_Statistik_Detaljer.xlsx')
+    Tippa.read_stats('Stryktips_summering.csv', 'Stryktips_detaljer.csv')
     Tippa.create_all_rows()
     Tippa.print_rows()
 
