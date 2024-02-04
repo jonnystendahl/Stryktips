@@ -87,8 +87,8 @@ class TippaRows:
             
         os.chdir('src')
         
-        df_sum = pd.read_csv(file_name_sum)
-        df_det = pd.read_csv(file_name_det)
+        df_sum = pd.read_csv(file_name_sum, sep = ';')
+        df_det = pd.read_csv(file_name_det, sep = ';')
         
         self.df = df_sum.join(df_det.set_index('omg'), on = 'omg',  lsuffix = '_sum', rsuffix = '_det')
 
@@ -98,8 +98,8 @@ class TippaRows:
 
         self.df.info()
 
-        # for row_label, row in self.df.iterrows():
-        #     print(row_label, row.omg, row.matchnummer, row.correct_row, row.utd13, row.utd12, row.oddset1, row.oddsetX, row.oddset2)
+        for row_label, row in d_sum.iterrows():
+            print(row_label, row.omg, row.matchnummer, row.correct_row, row.utd13, row.utd12, row.oddset1, row.oddsetX, row.oddset2)
         
         print('END')
 
