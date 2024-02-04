@@ -89,8 +89,12 @@ class TippaRows:
         
         df_sum = pd.read_csv(file_name_sum, sep = ';')
         df_det = pd.read_csv(file_name_det, sep = ';')
+
+        df_sum.sort_values(by = ['omg'], ignore_index = True, inplace = True)
+        df_det.sort_values(by = ['omg', 'matchnummer'], ignore_index = True, inplace = True)
         
-        self.df = df_sum.join(df_det.set_index('omg'), on = 'omg',  lsuffix = '_sum', rsuffix = '_det')
+        self.df = df_sum.merge(df_det, how='inner', on='omg', suffixes=('_left', '_right'))
+        # self.df = df_sum.join(df_det.set_index('omg'), on = 'omg',  lsuffix = '_sum', rsuffix = '_det')
 
         print(df_sum)
         print(df_det)
