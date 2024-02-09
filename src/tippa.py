@@ -92,9 +92,11 @@ class TippaRows:
 
         df_sum.sort_values(by = ['omg'], ignore_index = True, inplace = True)
         df_det.sort_values(by = ['omg', 'matchnummer'], ignore_index = True, inplace = True)
+
+        # df_sum.to_csv('sum.csv', index = False, sep = ';')
+        # df_det.to_csv('det.csv', index = False, sep = ';')
         
-        self.df = df_sum.merge(df_det, how='inner', on='omg', suffixes=('_left', '_right'))
-        # self.df = df_sum.join(df_det.set_index('omg'), on = 'omg',  lsuffix = '_sum', rsuffix = '_det')
+        self.df = pd.merge(df_sum, df_det, how='inner', on='omg', suffixes=('_left', '_right'), indicator = True)
 
         print(df_sum)
         print(df_det)
@@ -102,15 +104,20 @@ class TippaRows:
 
         self.df.info()
 
-        for row_label, row in d_sum.iterrows():
-            print(row_label, row.omg, row.matchnummer, row.correct_row, row.utd13, row.utd12, row.oddset1, row.oddsetX, row.oddset2)
+        for row_label, row in df_sum.iterrows():
+            # print(row_label, row.omg, row.correct_row)
+            df_rows = df_det.loc[df_det['omg'] == row.omg]
+            if len(df_rows.index) != 13:
+                print(row.omg)
+                                 
         
         print('END')
 
 def main():
     
     Tippa = TippaRows()
-    Tippa.read_stats('Stryktips_summering.csv', 'Stryktips_detaljer.csv')
+    # Tippa.read_stats('Stryktips_summering.csv', 'Stryktips_detaljer.csv')
+    Tippa.read_stats('sum.csv', 'new_det.csv')
     Tippa.create_all_rows()
     Tippa.print_rows()
 
