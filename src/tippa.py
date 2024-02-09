@@ -12,47 +12,11 @@ class TippaRows:
     np_odds_x = np.ones(13, dtype = float)
     np_odds_2 = np.ones(13, dtype = float)
 
-    df = pd.DataFrame
+    df_sum = pd.DataFrame
+    df_det = pd.DataFrame
     
     def __init__(self):
-        self.np_odds_1[0] = 1.0
-        self.np_odds_1[1] = 1.0
-        self.np_odds_1[2] = 1.0
-        self.np_odds_1[3] = 1.0
-        self.np_odds_1[4] = 1.0
-        self.np_odds_1[5] = 1.0
-        self.np_odds_1[6] = 1.0
-        self.np_odds_1[7] = 1.0
-        self.np_odds_1[8] = 1.0
-        self.np_odds_1[10] = 1.0
-        self.np_odds_1[11] = 1.0
-        self.np_odds_1[12] = 1.0
-
-        self.np_odds_x[0] = 2.0
-        self.np_odds_x[1] = 2.0
-        self.np_odds_x[2] = 2.0
-        self.np_odds_x[3] = 2.0
-        self.np_odds_x[4] = 2.0
-        self.np_odds_x[5] = 2.0
-        self.np_odds_x[6] = 2.0
-        self.np_odds_x[7] = 2.0
-        self.np_odds_x[8] = 2.0
-        self.np_odds_x[10] = 2.0
-        self.np_odds_x[11] = 2.0
-        self.np_odds_x[12] = 2.0
-
-        self.np_odds_2[0] = 3.0
-        self.np_odds_2[1] = 3.0
-        self.np_odds_2[2] = 3.0
-        self.np_odds_2[3] = 3.0
-        self.np_odds_2[4] = 3.0
-        self.np_odds_2[5] = 3.0
-        self.np_odds_2[6] = 3.0
-        self.np_odds_2[7] = 3.0
-        self.np_odds_2[8] = 3.0
-        self.np_odds_2[10] = 3.0
-        self.np_odds_2[11] = 3.0
-        self.np_odds_2[12] = 3.0
+        pass
 
     def create_all_rows(self):
         
@@ -65,9 +29,7 @@ class TippaRows:
         for row_str in it.product(signs, repeat = 13):
             self.np_rows[row_num] = ''.join(list(row_str))
             row_num += 1
-
-        self.np_sorted = np.argsort(self.np_odds)
-                    
+            
     def print_rows(self):
         print(self.np_rows)
         print("END")
@@ -82,43 +44,41 @@ class TippaRows:
             else:
                 self.np_odds[index] *= self.np_odds_2[row]
             row += 1
+        
+        self.np_sorted = np.argsort(self.np_odds)
 
     def read_stats(self, file_name_sum, file_name_det):
             
         os.chdir('src')
         
-        df_sum = pd.read_csv(file_name_sum, sep = ';')
-        df_det = pd.read_csv(file_name_det, sep = ';')
+        self.df_sum = pd.read_csv(file_name_sum, sep = ';')
+        self.df_det = pd.read_csv(file_name_det, sep = ';')
 
-        df_sum.sort_values(by = ['omg'], ignore_index = True, inplace = True)
-        df_det.sort_values(by = ['omg', 'matchnummer'], ignore_index = True, inplace = True)
+        self.df_sum.sort_values(by = ['omg'], ignore_index = True, inplace = True)
+        self.df_det.sort_values(by = ['omg', 'matchnummer'], ignore_index = True, inplace = True)
 
-        # df_sum.to_csv('sum.csv', index = False, sep = ';')
-        # df_det.to_csv('det.csv', index = False, sep = ';')
+        # self.df_sum.to_csv('sum.csv', index = False, sep = ';')
+        # self.df_det.to_csv('det.csv', index = False, sep = ';')
         
-        self.df = pd.merge(df_sum, df_det, how='inner', on='omg', suffixes=('_left', '_right'), indicator = True)
+        # self.df = pd.merge(self.df_sum, self.df_det, how='inner', on='omg', suffixes=('_left', '_right'), indicator = True)
 
-        print(df_sum)
-        print(df_det)
-        print(self.df)
+        for row_label, row in self.df.iterrows():
+            print(row_label, row.omg, row.correct_row, row.utd13, row.utd12, row.utd11, row.utd10, row.oddset1, row.oddsetx, row.oddset2)
+    
+    def simulate(self):
+        self.read_stats('sum.csv', 'new_det.csv')
 
-        self.df.info()
+        for
 
-        for row_label, row in df_sum.iterrows():
-            # print(row_label, row.omg, row.correct_row)
-            df_rows = df_det.loc[df_det['omg'] == row.omg]
-            if len(df_rows.index) != 13:
-                print(row.omg)
-                                 
-        
-        print('END')
+        for each omg
+            calulate odds arrays
+            sort np_rows on 
 
 def main():
     
     Tippa = TippaRows()
-    # Tippa.read_stats('Stryktips_summering.csv', 'Stryktips_detaljer.csv')
-    Tippa.read_stats('sum.csv', 'new_det.csv')
     Tippa.create_all_rows()
+    Tippa.simulate()
     Tippa.print_rows()
 
 if __name__ == "__main__":
