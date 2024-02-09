@@ -34,16 +34,24 @@ class TippaRows:
         print(self.np_rows)
         print("END")
 
-    def calculate_odds(self, index):
-        row = 0
-        for chr in self.np_rows[index]:
-            if chr == '1':
-                self.np_odds[index] *= self.np_odds_1[row]
-            elif chr == 'X':
-                self.np_odds[index] *= self.np_odds_x[row]
-            else:
-                self.np_odds[index] *= self.np_odds_2[row]
-            row += 1
+    def calculate_odds(self):
+
+        # reset odds
+        np_odds = np.ones(1594323, dtype = float)
+        
+        r = 0
+        for row in self.np_rows:
+            print("Calculate odd for row ", r)
+            x = 0
+            for chr in row:
+                if chr == '1':
+                    self.np_odds[r] *= self.np_odds_1[x]
+                elif chr == 'X':
+                    self.np_odds[r] *= self.np_odds_x[x]
+                else:
+                    self.np_odds[r] *= self.np_odds_2[x]
+                x += 1
+            r += 1
         
         self.np_sorted = np.argsort(self.np_odds)
 
@@ -61,18 +69,22 @@ class TippaRows:
         # self.df_det.to_csv('det.csv', index = False, sep = ';')
         
         # self.df = pd.merge(self.df_sum, self.df_det, how='inner', on='omg', suffixes=('_left', '_right'), indicator = True)
-
-        for row_label, row in self.df.iterrows():
-            print(row_label, row.omg, row.correct_row, row.utd13, row.utd12, row.utd11, row.utd10, row.oddset1, row.oddsetx, row.oddset2)
     
     def simulate(self):
         self.read_stats('sum.csv', 'new_det.csv')
 
-        for
-
-        for each omg
-            calulate odds arrays
-            sort np_rows on 
+        for sum_label, sum_row in self.df_sum.iterrows():
+            print(sum_label, sum_row)
+            df = self.df_det.query("omg == @sum_row.omg")
+            idx = 0
+            for det_label, det_row in df.iterrows():
+                print(det_label, det_row.omg, det_row.matchnummer, det_row.oddset1, det_row.oddsetx, det_row.oddset2)
+                self.np_odds_1[idx] = det_row.oddset1 if det_row.oddset1 > 0 else 1
+                self.np_odds_x[idx] = det_row.oddsetx if det_row.oddsetx > 0 else 1
+                self.np_odds_2[idx] = det_row.oddset2 if det_row.oddset2 > 0 else 1
+                idx += 1
+            self.calculate_odds()
+            self.np_sorted = np.argsort(self.np_odds)
 
 def main():
     
