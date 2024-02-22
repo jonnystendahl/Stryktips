@@ -6,6 +6,7 @@ import pandas as pd
 class TippaRows:
 
     np_rows = np.full(1594323, fill_value = '1111111111111', dtype = 'U13')
+    np_odds_new = np.array(np.meshgrid([1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], )).T.reshape(-1, 13)
     np_odds = np.ones(1594323, dtype = float)
     np_sorted = np.zeros(1594323, dtype = int)
     np_odds_1 = np.ones(13, dtype = float)
@@ -83,6 +84,9 @@ class TippaRows:
                 self.np_odds_x[idx] = det_row.oddsetx if det_row.oddsetx > 0 else 1
                 self.np_odds_2[idx] = det_row.oddset2 if det_row.oddset2 > 0 else 1
                 idx += 1
+            
+            odds = np.array(np.meshgrid(self.np_odds_1, self.np_odds_x, self.np_odds_2)).T.reshape(-1, 13)
+
             self.calculate_odds()
             self.np_sorted = np.argsort(self.np_odds)
 
@@ -95,3 +99,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+np.array(np.meshgrid([1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], )).T.reshape(-1, 13)
