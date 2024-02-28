@@ -5,10 +5,9 @@ import pandas as pd
 
 class TippaRows:
 
-    np_rows = np.full(1594323, fill_value = '1111111111111', dtype = 'U13')
-    np_odds_new = np.array(np.meshgrid([1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], )).T.reshape(-1, 13)
-    np_odds = np.ones(1594323, dtype = float)
-    np_sorted = np.zeros(1594323, dtype = int)
+    np_rows = np.array(np.meshgrid([1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], [1, 2, 3], )).T.reshape(-1, 13)
+    np_odds = np.ones(20726199, dtype = float).reshape(1594323, 13)
+    np_sorted = np.zeros(20726199, dtype = int).reshape(1594323, 13)
     np_odds_1 = np.ones(13, dtype = float)
     np_odds_x = np.ones(13, dtype = float)
     np_odds_2 = np.ones(13, dtype = float)
@@ -19,42 +18,34 @@ class TippaRows:
     def __init__(self):
         pass
 
-    def create_all_rows(self):
-        
-        rows = []
-        signs = '1X2'
-        row_num = 0
-        
-        # Generate all possible 1 594 323 row combinations
-        # Also create an array with the total odds for each row
-        for row_str in it.product(signs, repeat = 13):
-            self.np_rows[row_num] = ''.join(list(row_str))
-            row_num += 1
-            
     def print_rows(self):
         print(self.np_rows)
         print("END")
 
     def calculate_odds(self):
 
-        # reset odds
-        np_odds = np.ones(1594323, dtype = float)
+        # reset odds by setting all values to 1.0
+        self.np_odds[:] = 1.0
+
+        # Calc odds for each row in nr_rows
+        # Odds are find in np_odds_1, np_odds_x and np_odds_2
+        filter_1 = self.np_rows  == [1,1,1,1,1,1,1,1,1,1,1,1,1]
+        filter_x = self.np_rows  == [2,2,2,2,2,2,2,2,2,2,2,2,2]
+        filter_2 = self.np_rows  == [3,3,3,3,3,3,3,3,3,3,3,3,3]
+
+        np.multiply(self.np_odds, self.np_odds_1, out = self.np_odds, where = filter_1)
+        np.multiply(self.np_odds, self.np_odds_x, out = self.np_odds, where = filter_x)
+        np.multiply(self.np_odds, self.np_odds_2, out = self.np_odds, where = filter_2)
+
+        np_row_odds = np.prod(self.np_odds, axis = 1)
+
+        print(self.np_odds[0])
+        print(np_row_odds[0])
         
-        r = 0
-        for row in self.np_rows:
-            print("Calculate odd for row ", r)
-            x = 0
-            for chr in row:
-                if chr == '1':
-                    self.np_odds[r] *= self.np_odds_1[x]
-                elif chr == 'X':
-                    self.np_odds[r] *= self.np_odds_x[x]
-                else:
-                    self.np_odds[r] *= self.np_odds_2[x]
-                x += 1
-            r += 1
-        
-        self.np_sorted = np.argsort(self.np_odds)
+        self.np_sorted = np.argsort(np_row_odds)
+
+        print(np_row_odds[self.np_sorted[0]])
+        print(np.min(np_row_odds))
 
     def read_stats(self, file_name_sum, file_name_det):
             
@@ -65,11 +56,6 @@ class TippaRows:
 
         self.df_sum.sort_values(by = ['omg'], ignore_index = True, inplace = True)
         self.df_det.sort_values(by = ['omg', 'matchnummer'], ignore_index = True, inplace = True)
-
-        # self.df_sum.to_csv('sum.csv', index = False, sep = ';')
-        # self.df_det.to_csv('det.csv', index = False, sep = ';')
-        
-        # self.df = pd.merge(self.df_sum, self.df_det, how='inner', on='omg', suffixes=('_left', '_right'), indicator = True)
     
     def simulate(self):
         self.read_stats('sum.csv', 'new_det.csv')
@@ -85,15 +71,11 @@ class TippaRows:
                 self.np_odds_2[idx] = det_row.oddset2 if det_row.oddset2 > 0 else 1
                 idx += 1
             
-            odds = np.array(np.meshgrid(self.np_odds_1, self.np_odds_x, self.np_odds_2)).T.reshape(-1, 13)
-
             self.calculate_odds()
-            self.np_sorted = np.argsort(self.np_odds)
 
 def main():
     
     Tippa = TippaRows()
-    Tippa.create_all_rows()
     Tippa.simulate()
     Tippa.print_rows()
 
