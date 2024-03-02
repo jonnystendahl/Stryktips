@@ -53,10 +53,22 @@ class TippaRows:
         
         self.np_sorted = np.argsort(self.np_row_odds)
 
-        print(self.np_sorted[0])
-
     def simulate_cost_win(self, correct_row):
-        print(np.array(list(correct_row.replace('2', '4').replace('X', '2'))))
+
+        correct_row = '1111111111111'
+        row_to_check = np.array(list(correct_row.replace('2', '4').replace('X', '2'))).astype(dtype=np.int8)
+        
+        result = self.np_all_rows == row_to_check
+
+        x = np.count_nonzero(result, axis=1)
+
+        idx_13 = np.where(x == 13)[0][0]
+        xx = np.where(self.np_sorted == idx_13)[0][0]
+
+        print(row_to_check)
+        print(self.np_all_rows[xx])
+        
+        print('END')
 
     def read_stats(self, file_name_sum, file_name_det):
             
