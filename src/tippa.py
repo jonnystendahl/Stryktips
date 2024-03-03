@@ -55,19 +55,37 @@ class TippaRows:
 
     def simulate_cost_win(self, correct_row):
 
-        correct_row = '1111111111111'
+        # Convert the row as string to a array shape(13) where '1' = 1, 'X' = 2 and '2' = 4
         row_to_check = np.array(list(correct_row.replace('2', '4').replace('X', '2'))).astype(dtype=np.int8)
         
-        result = self.np_all_rows == row_to_check
+        # Compare the row against all rows, returning a array of True/False for each entry (match)
+        comp_result = self.np_all_rows == row_to_check
 
-        x = np.count_nonzero(result, axis=1)
+        # Count numer of True (1) values this is eaqual to number of correct results in each row
+        # this returns an array shape(1594323) with number of correct result in each row in np_all_rows
+        num_of_correct_result = np.count_nonzero(comp_result, axis=1)
 
-        idx_13 = np.where(x == 13)[0][0]
-        xx = np.where(self.np_sorted == idx_13)[0][0]
+        # Find the index of value 13, that is the one row with 13 correct result
+        # should always and only be one
+        idx_13 = np.where(num_of_correct_result == 13)[0][0]
 
-        print(row_to_check)
-        print(self.np_all_rows[xx])
+        # Find that index in np_sorted
+        idx_in_sorted_odds = np.where(self.np_sorted == idx_13)[0][0]
+        number_of_rows_to_bet = idx_in_sorted_odds
+
+        rows_to_bet = self.np_all_rows[self.np_sorted[:idx_in_sorted_odds+1]]
         
+        np.savetxt('array.txt', rows_to_bet, delimiter=',', fmt='%d')
+
+        
+        # Get the row with result 13
+        row_result_13 = self.np_sorted[idx_in_sorted_odds]
+
+        print('Correct row ', correct_row)
+        print('Converted row ', row_to_check)
+        print('Guess of row  ', self.np_all_rows[row_result_13])
+        print('Number of rows to bet ', number_of_rows_to_bet)
+
         print('END')
 
     def read_stats(self, file_name_sum, file_name_det):
