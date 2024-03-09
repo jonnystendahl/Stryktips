@@ -23,6 +23,14 @@ class TippaRows:
     np_odds_x = np.ones(13, dtype=float)
     np_odds_2 = np.ones(13, dtype=float)
 
+    # Keep track of hor much we bet and win
+    amount_bet = 0
+    amount_win = 0
+
+    # Keep track of MIN and MAX number of rows to bet
+    min_num_of_rows = 0
+    max_num_of_rows = 0
+
     # Pandas data frame to hold historical data of outcome
     # is used to evaluate methods against
     df_sum = pd.DataFrame
@@ -53,7 +61,7 @@ class TippaRows:
         
         self.np_sorted = np.argsort(self.np_row_odds)
 
-    def simulate_cost_win(self, correct_row):
+    def simulate_cost_win(self, correct_row, utd_13, utd_12, utd_11, utd_10):
 
         # Convert the row as string to a array shape(13) where '1' = 1, 'X' = 2 and '2' = 4
         row_to_check = np.array(list(correct_row.replace('2', '4').replace('X', '2'))).astype(dtype=np.int8)
@@ -73,11 +81,26 @@ class TippaRows:
         idx_in_sorted_odds = np.where(self.np_sorted == idx_13)[0][0]
         number_of_rows_to_bet = idx_in_sorted_odds
 
+        # Get all rows that we need to bet on to win 13 correct matches
         rows_to_bet = self.np_all_rows[self.np_sorted[:idx_in_sorted_odds+1]]
-        
-        np.savetxt('array.txt', rows_to_bet, delimiter=',', fmt='%d')
 
-        
+        # Calculate number of rows with 13, 12, 11 and 10 correct matches
+        comp_result = rows_to_bet == row_to_check
+
+        # Count numer of True (1) values this is eaqual to number of correct results in each row
+        # this returns an array shape(xx, 13) with number of correct result in each row in rows_to_bet
+        num_of_correct_result = np.count_nonzero(comp_result, axis=1)
+
+        cnt_13 = np.count_nonzero(num_of_correct_result == 13)
+        cnt_12 = np.count_nonzero(num_of_correct_result == 12)
+        cnt_11 = np.count_nonzero(num_of_correct_result == 11)
+        cnt_10 = np.count_nonzero(num_of_correct_result == 10)
+
+        amount_bet = number_of_rows_to_bet
+        amount_win = utd_13 * cnt_13 + utd_12 * cnt_12 + utd_11 * cnt_11 + utd_10 * cnt_10
+
+        return amount_bet, amount_win
+             
         # Get the row with result 13
         row_result_13 = self.np_sorted[idx_in_sorted_odds]
 
@@ -99,10 +122,17 @@ class TippaRows:
         self.df_det.sort_values(by = ['omg', 'matchnummer'], ignore_index = True, inplace = True)
     
     def test_method_odds(self):
+
+        # Reset values
+        self.amount_bet = 0
+        self.amount_win = 0
+        self.min_num_of_rows = 2000000
+        self.max_num_of_rows = 0
+        
         self.read_stats('sum.csv', 'new_det.csv')
 
         for sum_label, sum_row in self.df_sum.iterrows():
-            print(sum_row.omg, sum_row.correct_row, sum_row.utd13, sum_row.utd12, sum_row.utd11, sum_row.utd10)
+            # print(sum_row.omg, sum_row.correct_row, sum_row.utd13, sum_row.utd12, sum_row.utd11, sum_row.utd10)
             df = self.df_det.query("omg == @sum_row.omg")
             idx = 0
             for det_label, det_row in df.iterrows():
@@ -113,7 +143,18 @@ class TippaRows:
                 idx += 1
             
             self.calculate_odds()
-            self.simulate_cost_win(sum_row.correct_row)
+            amount_bet, amount_win = self.simulate_cost_win(sum_row.correct_row, sum_row.utd13, sum_row.utd12, sum_row.utd11, sum_row.utd10)
+            
+            self.amount_bet += amount_bet
+            self.amount_win += amount_win
+
+            self.min_num_of_rows = amount_bet if amount_bet < self.min_num_of_rows else self.min_num_of_rows
+            self.max_num_of_rows = amount_bet if amount_bet > self.max_num_of_rows else self.max_num_of_rows
+
+            print('Total amount bet: ', self.amount_bet)
+            print('Total amount win: ', self.amount_win)
+            print('Net win/loss: ', self.amount_win - self.amount_bet)
+            print('Min rows = ', self.min_num_of_rows, 'Max rows = ', self.max_num_of_rows)
 
 def main():
     
